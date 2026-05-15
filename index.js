@@ -9,7 +9,7 @@ const sequelize = new Sequelize('db_api', 'root', '', {
 })
 
 // ORM MAPEANDO CLASSE PARA TABELA NO BANCO DE DADOS.
- 
+
 const Cliente = sequelize.define('Cliente',{
     nome: {
         type: DataTypes.STRING,
@@ -24,6 +24,20 @@ const Cliente = sequelize.define('Cliente',{
         type: DataTypes.STRING,
         allowNull: false
     },
+})
+
+const Moto = sequelize.define('Moto', {
+    modelo: { type: DataTypes.STRING, allowNull: false },
+    marca: { type: DataTypes.STRING, allowNull: false },
+    cor: { type: DataTypes.STRING, allowNull: false },
+    ano: { type: DataTypes.INTEGER, allowNull: false }
+})
+
+const Carro = sequelize.define('Carro', {
+    marca: { type: DataTypes.STRING, allowNull: false },
+    modelo: { type: DataTypes.STRING, allowNull: false },
+    cor: { type: DataTypes.STRING, allowNull: false },
+    ano: { type: DataTypes.INTEGER, allowNull: false }
 })
 
 //CONFIGURANDO  SERVIDOR EXPRESS.
@@ -55,8 +69,38 @@ app.post('/clientes', async(req, res) =>{
             mensagem: 'erro ao cadastrar cliente. verifique se o e-mail já existe'
             })
         }
+
 })
 
+// ROtas para motos
+app.get('/motos', async (req, res) => {
+    const todasAsMotos = await Moto.findAll();
+    res.json(todasAsMotos);
+});
+
+app.post('/motos', async (req, res) => {
+    try {
+        const { modelo, marca, cor, ano } = req.body;
+        const novaMoto = await Moto.create({ modelo, marca, cor, ano });
+        res.status(201).json({ mensagem: 'Moto cadastrada com sucesso.', moto: novaMoto });
+    } catch (erro) {
+        res.status(400).json({ mensagem: 'Erro ao cadastrar moto.' });
+    }
+});
+
+//  Rotas para carros
+app.get('/carros', async(req, res) => {
+    try {
+        const { marca, modelo, cor, ano } = req.body;
+        const novoCarro = await Carro.create({ marca, modelo, cor, ano });
+        res.status(201).json({ mensagem: 'Carro cadastrado com sucesso.', carro: novoCarro });
+    } catch (erro) {
+        res.status(400).json({ mensagem: 'Erro ao cadastrar carro.'})
+    }
+
+
+});
+        
 // INICIAR API E CONECTAR AO BANCO DE DADOS.
 
 sequelize.sync().then(() => {
