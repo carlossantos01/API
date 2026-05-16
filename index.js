@@ -72,7 +72,7 @@ app.post('/clientes', async(req, res) =>{
 
 })
 
-// ROtas para motos
+//Rotas para motos
 app.get('/motos', async (req, res) => {
     const todasAsMotos = await Moto.findAll();
     res.json(todasAsMotos);
@@ -88,8 +88,16 @@ app.post('/motos', async (req, res) => {
     }
 });
 
-//  Rotas para carros
+//Rotas para carros
 app.get('/carros', async(req, res) => {
+    const todosOsCarros = await Carro.findAll();
+    res.json(todosOsCarros);
+
+
+});
+
+
+app.post('/carros', async(req, res) => {
     try {
         const { marca, modelo, cor, ano } = req.body;
         const novoCarro = await Carro.create({ marca, modelo, cor, ano });
